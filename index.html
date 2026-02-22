@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Weather & Cyclone Info</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #eaf6ff;
+            text-align: center;
+            padding: 30px;
+        }
+
+        input {
+            padding: 10px;
+            width: 250px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #result {
+            margin-top: 25px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            display: inline-block;
+            min-width: 300px;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>🌦 Weather & Cyclone Information</h1>
+
+<input type="text" id="location" placeholder="Enter city or address">
+<br><br>
+
+<button onclick="getWeather()">Know Info</button>
+
+<div id="result"></div>
+
+<script>
+const apiKey = "YOUR_API_KEY_HERE"; // Replace this
+
+async function getWeather() {
+
+    const location = document.getElementById("location").value;
+
+    if (!location) {
+        alert("Please enter a location");
+        return;
+    }
+
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${662a8a2d0d9728fa4007cd1829def1a2}&units=metric`;
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.cod !== 200) {
+            document.getElementById("result").innerHTML =
+                "<p>Location not found</p>";
+            return;
+        }
+
+        const temp = data.main.temp;
+        const condition = data.weather[0].description;
+        const wind = data.wind.speed;
+
+        let alertText = "No cyclone/storm alert";
+
+        if (wind > 20) {
+            alertText = "⚠ Possible storm conditions";
+        }
+
+        document.getElementById("result").innerHTML = `
+            <h3>${data.name}</h3>
+            <p>🌡 Temperature: ${temp} °C</p>
+            <p>☁ Condition: ${condition}</p>
+            <p>💨 Wind Speed: ${wind} m/s</p>
+            <p>🚨 Alert: ${alertText}</p>
+        `;
+
+    } catch (error) {
+        document.getElementById("result").innerHTML =
+            "<p>Error fetching data</p>";
+    }
+}
+</script>
+
+</body>
+</html>
